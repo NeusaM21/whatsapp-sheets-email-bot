@@ -1,0 +1,86 @@
+# =========================
+# SO / Python / Venv
+# =========================
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+.DS_Store
+Thumbs.db
+desktop.ini
+.ipynb_checkpoints/
+.python-version   # pyenv
+
+# =========================
+# IDE
+# =========================
+.vscode/
+*.code-workspace
+.idea/
+.fleet/
+.history/
+
+# =========================
+# Segredos e credenciais
+# (ordem IMPORTA: exceção vem depois)
+# =========================
+/.env
+/.env.*
+!/.env.example      
+.envrc              
+
+# pastas de segredos
+secrets/
+creds/
+
+# formatos de chaves/certs (extras de segurança)
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+
+# caso alguém deixe o JSON solto na raiz
+*service*account*.json
+google-credentials*.json
+
+# =========================
+# Logs / Bancos locais / Binários
+# =========================
+*.log
+*.db
+*.sqlite
+*.sqlite3
+.ngrok*
+ngrok.exe
+~$*                 # lockfiles do Office/OneDrive
+
+# (opcional) evitar subir dumps acidentais de leads
+# *.csv
+
+# =========================
+# Cache / Build
+# =========================
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage*
+coverage.xml
+htmlcov/
+
+# =========================
+# Temporários gerais
+# =========================
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
