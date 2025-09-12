@@ -1,4 +1,6 @@
-# whatsapp-sheets-email-bot — Guia Local (dev)
+<p align="center">
+  <img src="assets/banner-readme.png" alt="whatsapp-sheets-email-bot banner" width="100%" />
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python"/>
