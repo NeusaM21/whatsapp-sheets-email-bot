@@ -84,41 +84,45 @@ whatsapp-sheets-email-bot/
 ---
 
 ## 🔐 Configuração do `.env`
+
 Arquivo: [./.env.example](./.env.example)
 
-# App / Server  
-ENV=dev  
-HOST=127.0.0.1  
-PORT=5000  
-TZ=America/Sao_Paulo  
-LOG_LEVEL=INFO  
+```ini
+# App / Server
+ENV=dev
+HOST=127.0.0.1
+PORT=5000
+TZ=America/Sao_Paulo
+LOG_LEVEL=INFO
 
-# Google Sheets  
-SHEET_ID=1SQ56Wes9d54ahjK04furxZm4PViW2-Q3RLm-sJuqAE  
-SHEET_TAB=leads  
-GOOGLE_SERVICE_ACCOUNT_JSON=./creds/service-account.json  
-SHARE_WITH_EMAIL=whatsapp.bot.teste@gmail.com  
+# Google Sheets
+SHEET_ID=1SQ56Wes9d54ahjK04furxZm4PViW2-Q3RLm-sJuqAE
+SHEET_TAB=leads
+GOOGLE_SERVICE_ACCOUNT_JSON=./creds/service-account.json
+SHARE_WITH_EMAIL=whatsapp.bot.teste@gmail.com
 
-# E-mail (SMTP / Gmail)  
-EMAIL_ENABLED=0  
-SMTP_HOST=smtp.gmail.com  
-SMTP_PORT=587  
-SMTP_STARTTLS=1  
-SMTP_USER=seu_email@gmail.com  
-SMTP_PASS=SUA_SENHA_DE_APP  
-EMAIL_FROM=seu_email@gmail.com  
-EMAIL_TO=destinatario@exemplo.com  
-EMAIL_SUBJECT=Novo lead do WhatsApp  
+# E-mail (SMTP / Gmail)
+EMAIL_ENABLED=0
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_STARTTLS=1
+SMTP_USER=seu_email@gmail.com
+SMTP_PASS=SUA_SENHA_DE_APP
+EMAIL_FROM=seu_email@gmail.com
+EMAIL_TO=destinatario@exemplo.com
+EMAIL_SUBJECT=Novo lead do WhatsApp
 
-# Meta Webhook  
-VERIFY_TOKEN=minha-verificacao-super-secreta  
-WHATSAPP_TOKEN=EAAGxxxxxxxxxxxxxxxxxxxxxxxx  
+# Meta Webhook
+VERIFY_TOKEN=minha-verificacao-super-secreta
+WHATSAPP_TOKEN=EAAGxxxxxxxxxxxxxxxxxxxxxxxx
 
-# Testes locais  
-TEST_BASE_URL=http://127.0.0.1:5000  
-TEST_FROM=5511999999999  
-TEST_NAME=Maria Teste  
-TEST_BODY=Ola, quero orcamento  
+# Testes locais
+TEST_BASE_URL=http://127.0.0.1:5000
+TEST_FROM=5511999999999
+TEST_NAME=Maria Teste
+TEST_BODY=Ola, quero orcamento
+```
+
 
 ---
 
