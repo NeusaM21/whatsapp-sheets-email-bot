@@ -1,4 +1,13 @@
 <p align="center">
+  <a href="./README.md">
+    <img src="https://img.shields.io/badge/🇧🇷 Leia_em-Português-green?style=for-the-badge"/>
+  </a>
+  <a href="./README.en.md">
+    <img src="https://img.shields.io/badge/🇺🇸 Read_in-English-blue?style=for-the-badge"/>
+  </a>
+</p>
+
+<p align="center">
   <img src="assets/banner-readme.png" alt="whatsapp-sheets-email-bot banner" width="100%" />
 </p>
 
