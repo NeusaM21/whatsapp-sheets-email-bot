@@ -140,30 +140,25 @@ TEST_BODY=Hello, I want a quote
 
 ## 🌐 Flask Webhook (WhatsApp Cloud API)
 
-1. **Start local server:**  
-   `python scripts/webhook.py`  
+- **Start local server:** `python scripts/webhook.py`  
+- **Open HTTPS tunnel (ngrok):** `ngrok http 5000`  
+- **Configure in Meta (Developers):**  
+  - Webhook URL: `https://abc123.ngrok.io/webhook`  
+  - Verify Token: same as `.env`  
+  - Webhook Fields → `messages`  
 
-2. **Open HTTPS tunnel (ngrok):**  
-   `ngrok http 5000`  
+### 🔍 Tests
+- **GET with curl** → should return challenge  
+- **POST with sample payload** → creates new lead in Sheets + email sent  
+- **Logs** → visible in terminal and in `logs/app.log`
 
-3. **Configure in Meta (Developers):**  
-   - **Webhook URL:** `https://abc123.ngrok.io/webhook`  
-   - **Verify Token:** same as `.env`  
-   - **Webhook Fields:** `messages`  
-
-4. **Tests:**  
-   - **GET with curl** → should return challenge  
-   - **POST with sample payload** → creates new lead in Sheets + email sent  
-   - **Logs** → visible in terminal and in `logs/app.log`
-
-
-   ---
+---
 
 ## 🧠 Anti-duplicates
 
 - Implemented in `scripts/dedupe.py` via SQLite (`data/state.db`)  
 - Uses WhatsApp **wamid** as key  
-- Default TTL = 24h  
+- Default **TTL = 24h**  
 - Repeated messages are ignored  
 
 ---
@@ -171,35 +166,29 @@ TEST_BODY=Hello, I want a quote
 ## ✉️ Email with “Reply on WhatsApp” button
 
 - Includes button: `https://wa.me/55XXXXXXXXXXX`  
-- Supports logo via `.env` variable: `EMAIL_LOGO_URL`  
+- Supports logo via `.env` variable: `EMAIL_LOGO_URL`
 
 ---
 
 ## 🧯 Common Issues
 
-- **403 (Sheets API disabled):** enable Sheets + Drive in Google Cloud  
-- **SpreadsheetNotFound:** share sheet with service account email  
-- **SMTP failure:** use Gmail app password or Mailtrap credentials  
-- **ngrok not accessible:** run Flask before `ngrok http 5000`  
+- **403 (Sheets API disabled)** → enable Sheets + Drive in Google Cloud  
+- **SpreadsheetNotFound** → share sheet with service account email  
+- **SMTP failure** → use Gmail app password or Mailtrap credentials  
+- **ngrok not accessible** → run Flask before `ngrok http 5000`
 
 ---
 
 ## 🧩 Useful Commands
 
 - **Activate env:**  
-  - Windows CMD: `.venv\Scripts\activate`  
-  - PowerShell: `& ".\.venv\Scripts\Activate.ps1"`  
-  - Linux/Mac: `source .venv/bin/activate`  
+  `.venv\Scripts\activate` (Windows CMD) / `& ".\.venv\Scripts\Activate.ps1"` (PowerShell) / `source .venv/bin/activate` (Linux/Mac)  
 
 - **Scripts:**  
-  `python scripts/setup_sheet.py`,  
-  `python scripts/append_lead.py`,  
-  `python scripts/append_and_notify.py`,  
-  `python scripts/webhook.py`  
+  `python scripts/setup_sheet.py`, `python scripts/append_lead.py`, `python scripts/append_and_notify.py`, `python scripts/webhook.py`  
 
 - **Logs:**  
-  - Windows: `type .\logs\app.log`  
-  - Linux/Mac: `cat ./logs/app.log`  
+  `type .\logs\app.log` (Windows) / `cat ./logs/app.log` (Linux/Mac)
 
 ---
 
@@ -210,7 +199,7 @@ TEST_BODY=Hello, I want a quote
 - Deploy (Railway/Render/VPS)  
 - Simple HTML dashboard  
 
-**Current Status:** ✅ Sheets OK | ✅ Email OK | ✅ Webhook ready | ✅ Anti-duplicates | ✅ Logs  
+**Current Status:** ✅ Sheets OK | ✅ Email OK | ✅ Webhook ready | ✅ Anti-duplicates | ✅ Logs 
 
 ---
 
