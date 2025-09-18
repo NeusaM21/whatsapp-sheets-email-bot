@@ -1,11 +1,14 @@
 <p align="center">
-  <img src="assets/banner-readme.png" alt="whatsapp-sheets-email-bot banner" width="100%" />
+  <a href="./README.en.md">
+    <img src="https://img.shields.io/badge/🇺🇸%20READ%20IN-English-blue?style=for-the-badge"/>
+  </a>
+  <a href="./README.md">
+    <img src="https://img.shields.io/badge/🇧🇷%20LEIA%20EM-Português-green?style=for-the-badge"/>
+  </a>
 </p>
 
-<p align="center">
-  <a href="./README.md">
-    <img src="https://img.shields.io/badge/🌐 Read_in-Portuguese-green?style=for-the-badge"/>
-  </a>
+<p align="center"> 
+  <img src="assets/banner-readme.png" alt="whatsapp-sheets-email-bot banner" width="100%" />
 </p>
 
 <p align="center">
