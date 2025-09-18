@@ -26,7 +26,7 @@
 ---
 
 ## 🔗 Useful Links
-- **📊 Demo Sheet (view-only):** [Google Sheets](https://docs.google.com/spreadsheets/d/1SQ56Wes-9d54ahjK04furxZm4PViW2-Q3RLm-sJuqAE)  
+- **📊 Demo Sheet (view-only):** [Google Sheets](https://docs.google.com/spreadsheets/d/1SQ56Wes-9d54ahjK04furxZm4PViW2-Q3RLm-sJuqAE/edit?usp=sharing)  
 - **📘 Deploy Docs:** [./docs/DEPLOY.md](./docs/DEPLOY.md)  
 - **⚙️ Example config:** [./.env.example](./.env.example)
 
