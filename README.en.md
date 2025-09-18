@@ -28,7 +28,10 @@
 ## 🔗 Useful Links
 - **📊 Demo Sheet (view-only):** [Google Sheets](https://docs.google.com/spreadsheets/d/1SQ56Wes-9d54ahjK04furxZm4PViW2-Q3RLm-sJuqAE)  
 - **📘 Deploy Docs:** [./docs/DEPLOY.md](./docs/DEPLOY.md)  
-- **⚙️ Example config:** [./.env.example](./.env.example)  
+- **⚙️ Example config:** [./.env.example](./.env.example)
+
+⚠️ Note: This spreadsheet contains only **fictitious data** used for testing and demonstration.  
+No real customer or contact information was used.
 
 ---
 

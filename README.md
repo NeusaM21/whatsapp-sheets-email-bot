@@ -30,6 +30,9 @@
 - **📘 Docs de deploy:** [./docs/DEPLOY.md](./docs/DEPLOY.md)
 - **⚙️ Exemplo de configuração:** [./.env.example](./.env.example)
 
+⚠️ Observação: Esta planilha contém apenas **dados fictícios** usados para teste e demonstração.  
+Nenhuma informação real de clientes ou contatos foi utilizada.
+
 ---
 
 ## ⚡ Guia rápido
