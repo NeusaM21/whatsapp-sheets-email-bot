@@ -1,30 +1,44 @@
 # FILE: sheets_write.py
+from __future__ import annotations
+
 import os
 import json
-from typing import Dict, List, Optional
+from typing import Dict, Any, Optional
 from datetime import datetime
 
 import gspread
 from gspread.utils import rowcol_to_a1
 
+# -----------------------------------------------------------------------------
+# Logger
+# -----------------------------------------------------------------------------
+try:
+    from scripts.logging_setup import setup_logger
+    log = setup_logger("whatsapp-sheets-email-bot.sheets_write")
+except Exception:
+    import logging
+    logging.basicConfig(
+        level=os.getenv("LOG_LEVEL", "INFO").upper(),
+        format="%(asctime)s | %(levelname)-8s | %(message)s",
+    )
+    log = logging.getLogger("sheets_write")
+    log.propagate = False
+
 # ---- timezone local (usa TZ do .env) ----
 try:
     from zoneinfo import ZoneInfo  # Py3.9+
-except Exception:  # Windows sem zoneinfo -> pip install tzdata
+except Exception:
     ZoneInfo = None  # type: ignore
 
 
 # =============================================================================
 # Helpers de ambiente / nomes de colunas
 # =============================================================================
-
 def _env(name: str, default: str = "") -> str:
     return (os.getenv(name, default) or "").strip()
 
 def _colnames() -> Dict[str, str]:
-    """
-    Nomes de colunas vindos do .env; tudo em lower-case para comparação.
-    """
+    """Nomes de colunas vindos do .env; todos em lower-case para comparação."""
     return {
         "timestamp":    _env("COL_TIMESTAMP", "timestamp").lower(),
         "name":         _env("COL_NAME", "name").lower(),
@@ -38,10 +52,7 @@ def _colnames() -> Dict[str, str]:
     }
 
 def _now_local_str() -> str:
-    """
-    Retorna string de data/hora local no formato que o Sheets interpreta
-    (YYYY-MM-DD HH:MM:SS), respeitando TZ do .env (default America/Sao_Paulo).
-    """
+    """String de data/hora local (YYYY-MM-DD HH:MM:SS), respeitando TZ do .env."""
     tzname = _env("TZ", "America/Sao_Paulo")
     try:
         tz = ZoneInfo(tzname) if ZoneInfo else None
@@ -54,11 +65,10 @@ def _now_local_str() -> str:
 # =============================================================================
 # Conexão / abertura de planilha
 # =============================================================================
-
 def _service_account():
     """
-    Usa GOOGLE_APPLICATION_CREDENTIALS se existir; senão tenta SERVICE_ACCOUNT_FILE
-    / SERVICE_ACCOUNT_JSON; por fim, cai no default do gspread.
+    Usa GOOGLE_APPLICATION_CREDENTIALS se existir; senão tenta:
+    SERVICE_ACCOUNT_FILE / SERVICE_ACCOUNT_JSON; por fim, default do gspread.
     """
     cred_path = _env("GOOGLE_APPLICATION_CREDENTIALS")
     if cred_path and os.path.isfile(cred_path):
@@ -81,7 +91,6 @@ def _open_ws():
       - SHEET_TAB_LEADS (default: "leads")
     """
     gc = _service_account()
-
     sheet_id = _env("SHEET_ID")
     sheet_url = _env("SHEET_URL")
     tab = _env("SHEET_TAB_LEADS", "leads") or "leads"
@@ -102,14 +111,11 @@ def _open_ws():
 # =============================================================================
 # Cabeçalho / mapeamento
 # =============================================================================
-
-def _headers(ws) -> List[str]:
+def _headers(ws) -> list[str]:
     return [h.strip() for h in ws.row_values(1)]
 
 def _header_index_map(ws) -> Dict[str, int]:
-    """
-    Mapa: header_lower -> índice ZERO-based.
-    """
+    """Mapa: header_lower -> índice ZERO-based (0..n-1)."""
     idx: Dict[str, int] = {}
     for i, h in enumerate(_headers(ws)):
         if h:
@@ -118,13 +124,55 @@ def _header_index_map(ws) -> Dict[str, int]:
 
 
 # =============================================================================
+# Busca precisa por WAMID
+# =============================================================================
+def _find_row_by_wamid(ws, wamid: str) -> Optional[int]:
+    """
+    Retorna número da linha (1-based) onde o WAMID está, ou None.
+    Busca APENAS na coluna configurada em COL_WAMID (preciso e rápido).
+    """
+    wamid = (wamid or "").strip()
+    if not wamid:
+        return None
+
+    idx_map = _header_index_map(ws)
+    wamid_col_name = _colnames()["wamid"]
+
+    if wamid_col_name not in idx_map:
+        log.warning("Coluna WAMID não encontrada no header.")
+        return None
+
+    col_idx = idx_map[wamid_col_name] + 1  # 1-based
+    try:
+        # caminho rápido: findall + filtro de coluna e igualdade exata
+        matches = ws.findall(wamid)
+        for cell in matches:
+            if cell.col == col_idx and (cell.value or "").strip() == wamid:
+                return cell.row
+    except Exception as e:
+        log.warning("findall falhou (wamid=%s). Fallback por coluna. err=%s", wamid, e)
+
+    # fallback: varrer apenas a coluna WAMID
+    try:
+        col_vals = ws.col_values(col_idx)
+        for r, val in enumerate(col_vals, start=1):
+            if r == 1:  # header
+                continue
+            if (val or "").strip() == wamid:
+                return r
+    except Exception as e:
+        log.warning("Falha ao ler coluna WAMID | err=%s", e)
+
+    return None
+
+
+# =============================================================================
 # API pública
 # =============================================================================
-
-def append_by_header(record: Dict[str, str]) -> None:
+def append_by_header(record: Dict[str, Any]) -> int:
     """
-    Insere ao final mapeando pelos nomes EXATOS do cabeçalho (case-insensitive).
-    Só preenche as colunas existentes no header.
+    Apenas adiciona uma nova linha, alinhando pelos nomes do header (case-insensitive).
+    Retorna o índice (1-based) da linha criada.
     """
     ws = _open_ws()
     headers = _headers(ws)
@@ -136,108 +184,95 @@ def append_by_header(record: Dict[str, str]) -> None:
         if key in idx_map and idx_map[key] < len(row):
             row[idx_map[key]] = value
 
-    # Fundamental para o Sheets interpretar datas/formatos:
-    ws.append_row(row, value_input_option="USER_ENTERED")
+    ws.append_row(row, value_input_option="USER_ENTERED", table_range="A1")
 
+    # tentar localizar exatamente a linha criada pelo WAMID, se presente
+    wamid_key = "wamid" if "wamid" in record else _colnames()["wamid"]
+    wamid_val = (record.get(wamid_key) or "").strip()
+    if wamid_val:
+        found = _find_row_by_wamid(ws, wamid_val)
+        if found:
+            return found
 
-def _find_row_by_wamid(ws, wamid: str) -> Optional[int]:
-    """
-    Retorna número da linha (1-based) onde o WAMID está, ou None.
-    Busca APENAS na coluna configurada em COL_WAMID.
-    """
-    if not wamid:
-        return None
-    idx_map = _header_index_map(ws)
-    colnames = _colnames()
-    wamid_col_name = colnames["wamid"]
-
-    if wamid_col_name not in idx_map:
-        return None
-
-    col_idx_1based = idx_map[wamid_col_name] + 1
+    # fallback: número de linhas preenchidas
     try:
-        values = ws.col_values(col_idx_1based)
+        return len(ws.get_all_values())
     except Exception:
-        return None
-
-    # values[0] é header; dados começam na linha 2
-    for i, v in enumerate(values[1:], start=2):
-        if (v or "").strip() == wamid.strip():
-            return i
-    return None
+        return -1
 
 
-def upsert_by_wamid(record: Dict[str, str], preserve_timestamp: bool = True) -> Dict[str, str]:
+def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> Dict[str, Any]:
     """
-    Se existir WAMID, atualiza a linha; senão, insere.
-      - preserve_timestamp=True: mantém a coluna 'timestamp' da linha existente.
-      - Se 'updated_at' NÃO vier no record e a coluna existir, o writer preenche.
-    Retorna: {"action": "inserted"|"updated", "row": "<número>"}
+    Upsert por WAMID.
+    - Se WAMID existir: atualiza a MESMA linha (sem duplicar).
+    - Se não existir: cria nova linha.
+    - Se preserve_timestamp=True: nunca sobrescreve a coluna 'timestamp'.
+    Retorna: {"row": int, "created": bool}
     """
-    colnames = _colnames()
-    if not record.get("wamid") and not record.get(colnames["wamid"]):
-        raise AssertionError("upsert_by_wamid requer a chave 'wamid' no record")
-
     ws = _open_ws()
     headers = _headers(ws)
     idx_map = _header_index_map(ws)
+    cols = _colnames()
 
-    # aceita 'wamid' normal ou com o nome de coluna do .env
-    wamid_key = "wamid" if "wamid" in record else colnames["wamid"]
+    # aceita 'wamid' literal ou o alias configurado
+    wamid_key = "wamid" if "wamid" in record else cols["wamid"]
     wamid_val = (record.get(wamid_key) or "").strip()
     if not wamid_val:
-        raise AssertionError("record['wamid'] está vazio")
+        raise ValueError("upsert_by_wamid requer campo 'wamid' no record.")
 
-    # monta a linha alvo com o tamanho do cabeçalho
+    # linha alvo no tamanho do header
     row_values = [""] * max(1, len(headers))
     for field, value in record.items():
         k = (field or "").strip().lower()
         if k in idx_map:
             row_values[idx_map[k]] = value
 
-    # localizar linha existente
+    # procurar linha existente
     row_num = _find_row_by_wamid(ws, wamid_val)
 
     if row_num is None:
-        # INSERT
-        ws.append_row(row_values, value_input_option="USER_ENTERED")
-        # tenta recuperar a linha pelo WAMID recém gravado
-        try:
-            row_num = _find_row_by_wamid(ws, wamid_val)
-        except Exception:
-            row_num = None
-        if row_num is None:
-            # fallback: conta linhas preenchidas
+        # ---------------------- INSERT ----------------------
+        ws.append_row(row_values, value_input_option="USER_ENTERED", table_range="A1")
+        created = True
+
+        # localizar a linha recém criada
+        found = _find_row_by_wamid(ws, wamid_val)
+        if found:
+            row_num = found
+        else:
             try:
                 row_num = len(ws.get_all_values())
             except Exception:
                 row_num = -1
-        return {"action": "inserted", "row": str(row_num)}
 
-    # UPDATE -------------------------------------------------------------
-    # preserva timestamp existente (se habilitado)
-    ts_col_name = colnames["timestamp"]
-    if preserve_timestamp and ts_col_name in idx_map:
-        ts_col_1based = idx_map[ts_col_name] + 1
+        log.info("Append concluído | wamid=%s | row=%s", wamid_val, row_num)
+        return {"row": row_num, "created": created}
+
+    # ---------------------- UPDATE IN-PLACE ----------------------
+    # preserva timestamp atual se solicitado
+    ts_name = cols["timestamp"]
+    if preserve_timestamp and ts_name in idx_map:
+        ts_col = idx_map[ts_name] + 1
         try:
-            current_ts = ws.cell(row_num, ts_col_1based).value
+            current_ts = ws.cell(row_num, ts_col).value
         except Exception:
             current_ts = None
         if current_ts:
-            row_values[idx_map[ts_col_name]] = current_ts
+            row_values[idx_map[ts_name]] = current_ts
 
-    # updated_at: só preenche se NÃO veio no record
-    upd_col_name = colnames["updated_at"]
-    if upd_col_name in idx_map:
-        has_value_in_record = (
-            upd_col_name in record and str(record[upd_col_name] or "").strip() != ""
+    # garante updated_at quando não vier no record
+    upd_name = cols["updated_at"]
+    if upd_name in idx_map:
+        provided = (
+            upd_name in record and str(record[upd_name] or "").strip() != ""
         )
-        if not has_value_in_record:
-            row_values[idx_map[upd_col_name]] = _now_local_str()
+        if not provided:
+            row_values[idx_map[upd_name]] = _now_local_str()
 
     # range A1 da linha inteira (A -> última coluna do header)
     end_col = len(headers)
     a1_range = f"{rowcol_to_a1(row_num, 1)}:{rowcol_to_a1(row_num, end_col)}"
-
     ws.update(a1_range, [row_values], value_input_option="USER_ENTERED")
-    return {"action": "updated", "row": str(row_num)}
+
+    log.info("Update concluído | wamid=%s | row=%s", wamid_val, row_num)
+    return {"row": row_num, "created": False}
