@@ -171,47 +171,47 @@ def _find_row_by_wamid(ws, wamid: str) -> Optional[int]:
 # =============================================================================
 def append_by_header(record: Dict[str, Any]) -> int:
     """
-    Apenas adiciona uma nova linha, alinhando pelos nomes do header (case-insensitive).
+    Adiciona uma nova linha preenchendo apenas as colunas do record,
+    ignorando colunas imutáveis e evitando tocar em ranges protegidos.
     Retorna o índice (1-based) da linha criada.
     """
     ws = _open_ws()
-    headers = _headers(ws)
     idx_map = _header_index_map(ws)
 
-    row = [""] * max(1, len(headers))
-    for field, value in record.items():
-        key = (field or "").strip().lower()
-        if key in idx_map and idx_map[key] < len(row):
-            row[idx_map[key]] = value
-
-    ws.append_row(row, value_input_option="USER_ENTERED", table_range="A1")
-
-    # tentar localizar exatamente a linha criada pelo WAMID, se presente
-    wamid_key = "wamid" if "wamid" in record else _colnames()["wamid"]
-    wamid_val = (record.get(wamid_key) or "").strip()
-    if wamid_val:
-        found = _find_row_by_wamid(ws, wamid_val)
-        if found:
-            return found
-
-    # fallback: número de linhas preenchidas
+    # próxima linha vazia (após a última com conteúdo)
     try:
-        return len(ws.get_all_values())
+        next_row = len(ws.get_all_values()) + 1
     except Exception:
-        return -1
+        next_row = 2  # assume header na linha 1
+
+    immutable = {c.strip().lower() for c in _env("IMMUTABLE_COLS", "").split(",") if c.strip()}
+
+    updates = 0
+    for field, value in record.items():
+        k = (field or "").strip().lower()
+        if k not in idx_map:
+            continue
+        if k in immutable:
+            continue
+        a1 = rowcol_to_a1(next_row, idx_map[k] + 1)
+        ws.update(a1, "" if value is None else value, raw=False)  # USER_ENTERED
+        updates += 1
+
+    log.info("Append per-cell concluído | row=%s | cols_atualizadas=%s", next_row, updates)
+    return next_row
 
 
 def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> Dict[str, Any]:
     """
     Upsert por WAMID.
-    - Se WAMID existir: atualiza a MESMA linha (sem duplicar).
-    - Se não existir: cria nova linha.
+    - Se WAMID existir: atualiza a MESMA linha (sem duplicar), per-cell e seletivo.
+    - Se não existir: cria nova linha (INSERT per-cell), sem tocar em colunas imutáveis.
     - Se preserve_timestamp=True: nunca sobrescreve a coluna 'timestamp'.
-    - UPDATE seletivo: apenas colunas presentes no record e não imutáveis.
+    - updated_at é preenchido se não vier no record.
+    - Respeita IMMUTABLE_COLS (CSV no .env) para nunca tocar em colunas de fórmula/protegidas.
     Retorna: {"row": int, "created": bool}
     """
     ws = _open_ws()
-    headers = _headers(ws)
     idx_map = _header_index_map(ws)
     cols = _colnames()
 
@@ -221,33 +221,30 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
     if not wamid_val:
         raise ValueError("upsert_by_wamid requer campo 'wamid' no record.")
 
-    # localizar linha existente
     row_num = _find_row_by_wamid(ws, wamid_val)
 
+    # ---------------------- INSERT (per-cell) ----------------------
     if row_num is None:
-        # ---------------------- INSERT ----------------------
-        # monta a nova linha alinhada ao header
-        row_values = [""] * max(1, len(headers))
+        try:
+            row_num = len(ws.get_all_values()) + 1
+        except Exception:
+            row_num = 2
+
+        immutable = {c.strip().lower() for c in _env("IMMUTABLE_COLS", "").split(",") if c.strip()}
+
+        writes = 0
         for field, value in record.items():
             k = (field or "").strip().lower()
-            if k in idx_map:
-                row_values[idx_map[k]] = value
+            if k not in idx_map:
+                continue
+            if k in immutable:
+                continue
+            a1 = rowcol_to_a1(row_num, idx_map[k] + 1)
+            ws.update(a1, "" if value is None else value, raw=False)  # USER_ENTERED
+            writes += 1
 
-        ws.append_row(row_values, value_input_option="USER_ENTERED", table_range="A1")
-        created = True
-
-        # localizar a linha recém criada
-        found = _find_row_by_wamid(ws, wamid_val)
-        if found:
-            row_num = found
-        else:
-            try:
-                row_num = len(ws.get_all_values())
-            except Exception:
-                row_num = -1
-
-        log.info("Append concluído | wamid=%s | row=%s", wamid_val, row_num)
-        return {"row": row_num, "created": created}
+        log.info("Insert per-cell concluído | wamid=%s | row=%s | cols_atualizadas=%s", wamid_val, row_num, writes)
+        return {"row": row_num, "created": True}
 
     # ---------------------- UPDATE IN-PLACE (SELETIVO) ----------------------
     ts_name  = cols["timestamp"]
@@ -278,7 +275,7 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
         if k in immutable:
             continue
         a1 = rowcol_to_a1(row_num, idx_map[k] + 1)
-        ws.update(a1, "" if value is None else value, raw=False)
+        ws.update(a1, "" if value is None else value, raw=False)  # USER_ENTERED
         updates += 1
 
     log.info("Update seletivo concluído | wamid=%s | row=%s | cols_atualizadas=%s", wamid_val, row_num, updates)
