@@ -167,14 +167,14 @@ def _find_row_by_wamid(ws, wamid: str) -> Optional[int]:
 
 
 # =============================================================================
-# Update helper (sempre 2D + USER_ENTERED)
+# Update helper (sempre 2D + USER_ENTERED via raw=False)
 # =============================================================================
 def _update_cell_user_entered(ws, a1: str, value) -> None:
-    ws.update(
-        a1,
-        values=[[("" if value is None else value)]],
-        value_input_option="USER_ENTERED",
-    )
+    """
+    Sempre envia matriz 2D e usa raw=False (equivalente a USER_ENTERED),
+    evitando ambiguidade de parâmetros em versões diferentes do gspread.
+    """
+    ws.update(a1, [[("" if value is None else value)]], raw=False)
 
 
 # =============================================================================
