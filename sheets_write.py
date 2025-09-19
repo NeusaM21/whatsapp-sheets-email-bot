@@ -167,6 +167,17 @@ def _find_row_by_wamid(ws, wamid: str) -> Optional[int]:
 
 
 # =============================================================================
+# Update helper (sempre 2D + USER_ENTERED)
+# =============================================================================
+def _update_cell_user_entered(ws, a1: str, value) -> None:
+    ws.update(
+        a1,
+        values=[[("" if value is None else value)]],
+        value_input_option="USER_ENTERED",
+    )
+
+
+# =============================================================================
 # API pública
 # =============================================================================
 def append_by_header(record: Dict[str, Any]) -> int:
@@ -194,7 +205,7 @@ def append_by_header(record: Dict[str, Any]) -> int:
         if k in immutable:
             continue
         a1 = rowcol_to_a1(next_row, idx_map[k] + 1)
-        ws.update(a1, "" if value is None else value, raw=False)  # USER_ENTERED
+        _update_cell_user_entered(ws, a1, value)
         updates += 1
 
     log.info("Append per-cell concluído | row=%s | cols_atualizadas=%s", next_row, updates)
@@ -240,7 +251,7 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
             if k in immutable:
                 continue
             a1 = rowcol_to_a1(row_num, idx_map[k] + 1)
-            ws.update(a1, "" if value is None else value, raw=False)  # USER_ENTERED
+            _update_cell_user_entered(ws, a1, value)
             writes += 1
 
         log.info("Insert per-cell concluído | wamid=%s | row=%s | cols_atualizadas=%s", wamid_val, row_num, writes)
@@ -250,7 +261,7 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
     ts_name  = cols["timestamp"]
     upd_name = cols["updated_at"]
 
-    # colunas que NUNCA serão tocadas (fórmulas/protegidas). Ex: "timestamp_convertido,updated_at_convertido,diff_minutos"
+    # colunas que NUNCA serão tocadas (fórmulas/protegidas)
     immutable = {c.strip().lower() for c in _env("IMMUTABLE_COLS", "").split(",") if c.strip()}
 
     # 1) preservar timestamp (se solicitado)
@@ -275,7 +286,7 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
         if k in immutable:
             continue
         a1 = rowcol_to_a1(row_num, idx_map[k] + 1)
-        ws.update(a1, "" if value is None else value, raw=False)  # USER_ENTERED
+        _update_cell_user_entered(ws, a1, value)
         updates += 1
 
     log.info("Update seletivo concluído | wamid=%s | row=%s | cols_atualizadas=%s", wamid_val, row_num, updates)
