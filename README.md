@@ -35,6 +35,20 @@ Nenhuma informação real de clientes ou contatos foi utilizada.
 
 ---
 
+## 🎥 Demo (PT)
+<details>
+<summary>Clique para ver a demo</summary>
+
+<p align="center">
+  <img src="assets/demo-whatsapp-sheets-bot.gif" alt="Linha entrando na planilha (WhatsApp → Sheets → Email)" width="720">
+</p>
+
+**O que o GIF mostra:** envio de um lead de teste via `/webhook`, inserção automática na aba `leads`, `updated_at` preenchido e `diff_minutos = 0`.  
+Extras visuais: duplicado de **WAMID** destacado em laranja e validação de data em **updated_at**.
+</details>
+
+---
+
 ## ⚡ Guia rápido
 ### Ativar ambiente
 - **Windows (CMD):** `.venv\Scripts\activate`
