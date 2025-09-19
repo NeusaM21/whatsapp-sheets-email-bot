@@ -35,6 +35,22 @@ No real customer or contact information was used.
 
 ---
 
+## 🎥 Demo (EN)
+<details open>
+<summary>Click to watch the demo</summary>
+
+<p align="center">
+  <img src="assets/demo-whatsapp-sheets-bot.gif"
+       alt="New row entering the Google Sheet (WhatsApp → Sheets → Email)"
+       width="960">
+</p>
+
+**What the GIF shows:** a test lead sent through `/webhook`, auto-inserted into the `leads` sheet, `updated_at` auto-filled, and `diff_minutos = 0`.  
+Visual helpers: **WAMID** duplicates highlighted in orange and **updated_at** protected with date validation.
+</details>
+
+---
+
 ## ⚡ Quickstart
 ### Activate environment
 - **Windows (CMD):** `.venv\Scripts\activate`  
