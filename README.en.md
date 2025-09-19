@@ -30,12 +30,11 @@
 - **📘 Deploy Docs:** [./docs/DEPLOY.md](./docs/DEPLOY.md)  
 - **⚙️ Example config:** [./.env.example](./.env.example)
 
-⚠️ Note: This spreadsheet contains only **fictitious data** used for testing and demonstration.  
-No real customer or contact information was used.
+> **Note:** This sheet only contains fictitious data for testing and demo purposes. No real customer or contact info was used.
 
 ---
 
-## 🎥 Demo (EN)
+## 🎥 ## Demo
 <details open>
 <summary>Click to watch the demo</summary>
 
@@ -45,8 +44,8 @@ No real customer or contact information was used.
      width="960">
 </p>
 
-**What the GIF shows:** a test lead sent via `/webhook`, automatically inserted into the `leads` sheet, `updated_at` filled, and `diff_minutos = 0`.  
-Visual extras: **WAMID** duplicates highlighted in orange and date validation on **updated_at**.
+**What the GIF shows:** a test lead is sent via `/webhook`, automatically inserted into the `leads` sheet, `updated_at` is populated, and `diff_minutos = 0`.  
+**Extra visuals:** duplicate **WAMID** highlighted in orange and date validation on **updated_at**.
 
 ---
 

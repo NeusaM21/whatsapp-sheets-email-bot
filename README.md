@@ -35,7 +35,7 @@ Nenhuma informação real de clientes ou contatos foi utilizada.
 
 ---
 
-## 🎥 Demo (PT)
+## 🎥 ## Demo
 <details open>
 <summary>Clique para ver a demo</summary>
 
