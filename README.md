@@ -41,13 +41,12 @@ Nenhuma informação real de clientes ou contatos foi utilizada.
 
 <p align="center">
   <img src="assets/demo-whatsapp-sheets-bot.gif"
-       alt="Linha entrando na planilha (WhatsApp → Sheets → Email)"
-       width="960">
+     alt="Linha entrando na planilha (WhatsApp → Sheets → Email)"
+     width="960">
 </p>
 
 **O que o GIF mostra:** envio de um lead de teste via `/webhook`, inserção automática na aba `leads`, `updated_at` preenchido e `diff_minutos = 0`.  
 Extras visuais: duplicado de **WAMID** destacado em laranja e validação de data em **updated_at**.
-</details>
 
 ---
 
