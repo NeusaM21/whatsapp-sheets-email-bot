@@ -37,6 +37,11 @@ except Exception:
 def _env(name: str, default: str = "") -> str:
     return (os.getenv(name, default) or "").strip()
 
+def _immutable_set() -> set[str]:
+    # nomes exatos do header (case-insensitive), separados por vírgula
+    raw = _env("IMMUTABLE_COLS", "")
+    return {c.strip().lower() for c in raw.split(",") if c.strip()}
+
 def _colnames() -> Dict[str, str]:
     """Nomes de colunas vindos do .env; todos em lower-case para comparação."""
     return {
@@ -188,14 +193,13 @@ def append_by_header(record: Dict[str, Any]) -> int:
     """
     ws = _open_ws()
     idx_map = _header_index_map(ws)
+    immutable = _immutable_set()
 
     # próxima linha vazia (após a última com conteúdo)
     try:
         next_row = len(ws.get_all_values()) + 1
     except Exception:
         next_row = 2  # assume header na linha 1
-
-    immutable = {c.strip().lower() for c in _env("IMMUTABLE_COLS", "").split(",") if c.strip()}
 
     updates = 0
     for field, value in record.items():
@@ -225,6 +229,7 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
     ws = _open_ws()
     idx_map = _header_index_map(ws)
     cols = _colnames()
+    immutable = _immutable_set()
 
     # aceita 'wamid' literal ou o alias configurado
     wamid_key = "wamid" if "wamid" in record else cols["wamid"]
@@ -240,8 +245,6 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
             row_num = len(ws.get_all_values()) + 1
         except Exception:
             row_num = 2
-
-        immutable = {c.strip().lower() for c in _env("IMMUTABLE_COLS", "").split(",") if c.strip()}
 
         writes = 0
         for field, value in record.items():
@@ -260,9 +263,6 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
     # ---------------------- UPDATE IN-PLACE (SELETIVO) ----------------------
     ts_name  = cols["timestamp"]
     upd_name = cols["updated_at"]
-
-    # colunas que NUNCA serão tocadas (fórmulas/protegidas)
-    immutable = {c.strip().lower() for c in _env("IMMUTABLE_COLS", "").split(",") if c.strip()}
 
     # 1) preservar timestamp (se solicitado)
     if preserve_timestamp and ts_name in idx_map:
