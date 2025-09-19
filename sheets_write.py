@@ -207,6 +207,7 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
     - Se WAMID existir: atualiza a MESMA linha (sem duplicar).
     - Se não existir: cria nova linha.
     - Se preserve_timestamp=True: nunca sobrescreve a coluna 'timestamp'.
+    - UPDATE seletivo: apenas colunas presentes no record e não imutáveis.
     Retorna: {"row": int, "created": bool}
     """
     ws = _open_ws()
@@ -220,18 +221,18 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
     if not wamid_val:
         raise ValueError("upsert_by_wamid requer campo 'wamid' no record.")
 
-    # linha alvo no tamanho do header
-    row_values = [""] * max(1, len(headers))
-    for field, value in record.items():
-        k = (field or "").strip().lower()
-        if k in idx_map:
-            row_values[idx_map[k]] = value
-
-    # procurar linha existente
+    # localizar linha existente
     row_num = _find_row_by_wamid(ws, wamid_val)
 
     if row_num is None:
         # ---------------------- INSERT ----------------------
+        # monta a nova linha alinhada ao header
+        row_values = [""] * max(1, len(headers))
+        for field, value in record.items():
+            k = (field or "").strip().lower()
+            if k in idx_map:
+                row_values[idx_map[k]] = value
+
         ws.append_row(row_values, value_input_option="USER_ENTERED", table_range="A1")
         created = True
 
@@ -248,31 +249,37 @@ def upsert_by_wamid(record: Dict[str, Any], preserve_timestamp: bool = True) -> 
         log.info("Append concluído | wamid=%s | row=%s", wamid_val, row_num)
         return {"row": row_num, "created": created}
 
-    # ---------------------- UPDATE IN-PLACE ----------------------
-    # preserva timestamp atual se solicitado
-    ts_name = cols["timestamp"]
+    # ---------------------- UPDATE IN-PLACE (SELETIVO) ----------------------
+    ts_name  = cols["timestamp"]
+    upd_name = cols["updated_at"]
+
+    # colunas que NUNCA serão tocadas (fórmulas/protegidas). Ex: "timestamp_convertido,updated_at_convertido,diff_minutos"
+    immutable = {c.strip().lower() for c in _env("IMMUTABLE_COLS", "").split(",") if c.strip()}
+
+    # 1) preservar timestamp (se solicitado)
     if preserve_timestamp and ts_name in idx_map:
-        ts_col = idx_map[ts_name] + 1
         try:
-            current_ts = ws.cell(row_num, ts_col).value
+            current_ts = ws.cell(row_num, idx_map[ts_name] + 1).value
         except Exception:
             current_ts = None
         if current_ts:
-            row_values[idx_map[ts_name]] = current_ts
+            record[ts_name] = current_ts  # injeta o existente para não ser sobrescrito
 
-    # garante updated_at quando não vier no record
-    upd_name = cols["updated_at"]
-    if upd_name in idx_map:
-        provided = (
-            upd_name in record and str(record[upd_name] or "").strip() != ""
-        )
-        if not provided:
-            row_values[idx_map[upd_name]] = _now_local_str()
+    # 2) garantir updated_at quando não vier no record
+    if upd_name in idx_map and (upd_name not in record or str(record.get(upd_name) or "").strip() == ""):
+        record[upd_name] = _now_local_str()
 
-    # range A1 da linha inteira (A -> última coluna do header)
-    end_col = len(headers)
-    a1_range = f"{rowcol_to_a1(row_num, 1)}:{rowcol_to_a1(row_num, end_col)}"
-    ws.update(a1_range, [row_values], value_input_option="USER_ENTERED")
+    # 3) aplicar célula a célula somente nas colunas presentes no record e não imutáveis
+    updates = 0
+    for field, value in record.items():
+        k = (field or "").strip().lower()
+        if k not in idx_map:
+            continue
+        if k in immutable:
+            continue
+        a1 = rowcol_to_a1(row_num, idx_map[k] + 1)
+        ws.update(a1, "" if value is None else value, raw=False)
+        updates += 1
 
-    log.info("Update concluído | wamid=%s | row=%s", wamid_val, row_num)
+    log.info("Update seletivo concluído | wamid=%s | row=%s | cols_atualizadas=%s", wamid_val, row_num, updates)
     return {"row": row_num, "created": False}
