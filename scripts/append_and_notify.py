@@ -75,7 +75,6 @@ except Exception as e:  # pragma: no cover
 # =============================================================================
 # Utils
 # =============================================================================
-
 def _flag(name: str, default: int = 0) -> bool:
     return str(os.getenv(name, str(default))).strip().lower() in {"1", "true", "yes", "on"}
 
@@ -142,18 +141,17 @@ def _find_row_by_wamid(ws, wamid: str) -> Optional[int]:
         pass
     return None
 
-def _call_upsert(record: Dict[str, Any], preserve_timestamp: bool = False) -> None:
-    """Wrapper para upsert_by_wamid com preserve_timestamp quando suportado."""
+def _call_upsert(record: Dict[str, Any], preserve_timestamp: bool = False) -> Optional[Dict[str, Any]]:
+    """Wrapper para upsert_by_wamid com preserve_timestamp quando suportado (RETORNA o dict)."""
     try:
-        upsert_by_wamid(record, preserve_timestamp=preserve_timestamp)  # type: ignore[arg-type]
+        return upsert_by_wamid(record, preserve_timestamp=preserve_timestamp)  # type: ignore[arg-type]
     except TypeError:
-        upsert_by_wamid(record)  # type: ignore[call-arg]
+        return upsert_by_wamid(record)  # type: ignore[call-arg]
 
 
 # =============================================================================
 # Payload parsing
 # =============================================================================
-
 def _extract_from_webhook(payload: Dict[str, Any]) -> Dict[str, Any]:
     """
     Extrai o primeiro evento útil:
@@ -173,9 +171,9 @@ def _extract_from_webhook(payload: Dict[str, Any]) -> Dict[str, Any]:
     name = ((contact.get("profile") or {}).get("name") or "").strip()
     text = ((msg.get("text") or {}).get("body") or "").strip()
 
-    # heurística simples pra achar e-mail dentro do texto
+    # heurística melhorada pra achar e-mail dentro do texto (aceita +, %, etc.)
     email = None
-    m = re.search(r"[\w\.-]+@[\w\.-]+\.\w{2,}", text)
+    m = re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", text)
     if m:
         email = m.group(0).lower()
 
@@ -192,7 +190,6 @@ def _extract_from_webhook(payload: Dict[str, Any]) -> Dict[str, Any]:
 # =============================================================================
 # Core
 # =============================================================================
-
 def process_incoming(payload: Dict[str, Any]) -> Dict[str, Any]:
     """
     Ponto de entrada chamado pelo webhook.
@@ -263,8 +260,11 @@ def process_incoming(payload: Dict[str, Any]) -> Dict[str, Any]:
 
     try:
         log.info("💾 Salvando linha (upsert inicial)… | req=%s | status_email=%s", req, base_record[COL_SE])
-        _call_upsert(base_record, preserve_timestamp=True)
-        log.info("💾 Upsert inicial concluído | req=%s", req)
+        res1 = _call_upsert(base_record, preserve_timestamp=True) or {}
+        # se dedupe não rolou (linha nova), row pode vir daqui
+        if not row_idx:
+            row_idx = res1.get("row")
+        log.info("💾 Upsert inicial concluído | req=%s | row=%s", req, row_idx)
     except Exception as e:
         log.exception("Falha no upsert inicial | req=%s", req)
         return {"ok": False, "status": "error", "req": req, "error": "sheets_upsert_failed", "detail": str(e)}
@@ -308,8 +308,10 @@ def process_incoming(payload: Dict[str, Any]) -> Dict[str, Any]:
             COL_UPD: ts_for_updated_at,                   # exatamente igual ao timestamp
         }
         log.info("🔄 Atualizando status_email e updated_at… | req=%s | status_email=%s", req, email_status)
-        _call_upsert(merged_record, preserve_timestamp=True)
-        log.info("🔄 Upsert final concluído | req=%s", req)
+        res2 = _call_upsert(merged_record, preserve_timestamp=True) or {}
+        if not row_idx:
+            row_idx = res2.get("row")
+        log.info("🔄 Upsert final concluído | req=%s | row=%s", req, row_idx)
     except Exception as e:
         log.warning("Falha ao marcar status_email/updated_at | req=%s | err=%s", req, e)
 
@@ -318,7 +320,7 @@ def process_incoming(payload: Dict[str, Any]) -> Dict[str, Any]:
     ok_flag = (status != "error") and (email_status in {"sent", "skipped"})
     detail = "Fluxo concluído" if ok_flag else "Fluxo com problemas"
 
-    log.info("✅ %s | req=%s | wamid=%s | email=%s", status.upper(), req, lead.get("wamid"), email_status)
+    log.info("✅ %s | req=%s | wamid=%s | email=%s | row=%s", status.upper(), req, lead.get("wamid"), email_status, row_idx)
 
     return {
         "ok": ok_flag,
@@ -326,7 +328,7 @@ def process_incoming(payload: Dict[str, Any]) -> Dict[str, Any]:
         "detail": detail,
         "req": req,
         "wamid": lead.get("wamid"),
-        "row": row_idx,  # pode vir None se não buscamos
+        "row": row_idx,  # agora tende a vir preenchido mesmo em insert
         "email_status": email_status,
         "lead": {
             "name": lead.get("name"),
@@ -352,7 +354,7 @@ if __name__ == "__main__":  # pragma: no cover
                     "messages": [{
                         "id": "wamid.TEST.DEBUG",
                         "from": "5511999999999",
-                        "text": {"body": "Olá, quero orçamento. meuemail@exemplo.com"}
+                        "text": {"body": "Olá, quero orçamento. cliente.teste+demo@gmail.com"}
                     }],
                     "contacts": [{
                         "profile": {"name": "Neusa Debug"}
