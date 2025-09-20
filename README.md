@@ -29,6 +29,24 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT"/>
 </p>
 
+---
+
+## 📑 Sumário
+
+- [🔗 Links úteis](#-links-úteis)
+- [🎥 Demo](#-demo)
+- [⚡ Guia rápido](#-guia-rápido)
+- [🌐 Webhook Flask (WhatsApp Cloud API)](#-webhook-flask-whatsapp-cloud-api)
+- [🧠 Anti-duplicados](#-anti-duplicados)
+- [✉️ E-mail com botão “Responder no WhatsApp”](#️-e-mail-com-botão-responder-no-whatsapp)
+- [🧯 Problemas comuns](#-problemas-comuns)
+- [🧩 Comandos úteis](#-comandos-úteis)
+- [🗺️ Roadmap](#️-roadmap)
+- [📜 Licença](#-licença)
+- [👩‍💻 Autora & Contato](#-autora--contato)
+
+---
+
 ## 🔗 Links úteis
 
 - **📊 Planilha demo (view-only):** [Google Sheets](https://docs.google.com/spreadsheets/d/1SQ56Wes-9d54ahjK04furxZm4PViW2-Q3RLm-sJuqAE/edit?usp=sharing)
@@ -226,3 +244,12 @@ Este projeto está sob a licença [MIT](./LICENSE).
 ## 👩‍💻 Autora & Contato
 **Autora:** [NeusaM21](https://github.com/NeusaM21)  
 **Contato:** [contact.neusam21@gmail.com](mailto:contact.neusam21@gmail.com)
+
+---
+
+<!-- Botão voltar -->
+<p align="left">
+  <a href="../">
+    <img src="https://img.shields.io/badge/⬅️-Voltar%20para%20o%20portfólio%20principal-blue?style=for-the-badge"/>
+  </a>
+</p>
