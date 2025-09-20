@@ -33,17 +33,17 @@
 
 ## 📑 Sumário
 
-- [🔗 Links úteis](#-links-úteis)
-- [🎥 Demo](#-demo)
-- [⚡ Guia rápido](#-guia-rápido)
-- [🌐 Webhook Flask (WhatsApp Cloud API)](#-webhook-flask-whatsapp-cloud-api)
-- [🧠 Anti-duplicados](#-anti-duplicados)
-- [✉️ E-mail com botão “Responder no WhatsApp”](#️-e-mail-com-botão-responder-no-whatsapp)
-- [🧯 Problemas comuns](#-problemas-comuns)
-- [🧩 Comandos úteis](#-comandos-úteis)
-- [🗺️ Roadmap](#-roadmap)
-- [📜 Licença](#-licença)
-- [👩‍💻 Autora & Contato](#-autora--contato)
+- [🔗 Links úteis](#links-uteis)
+- [🎥 Demo](#demo)
+- [⚡ Guia rápido](#guia-rapido)
+- [🌐 Webhook Flask (WhatsApp Cloud API)](#webhook-flask)
+- [🧠 Anti-duplicados](#anti-duplicados)
+- [✉️ E-mail com botão “Responder no WhatsApp”](#email-whatsapp)
+- [🧯 Problemas comuns](#problemas-comuns)
+- [🧩 Comandos úteis](#comandos-uteis)
+- [🗺️ Roadmap](#roadmap)
+- [📜 Licença](#licenca)
+- [👩‍💻 Autora & Contato](#autora-contato)
 
 ---
 
@@ -228,6 +228,7 @@ Ver logs: `type .\logs\app.log` (Windows) / `cat ./logs/app.log` (Linux/Mac)
 
 ---
 
+<a id="roadmap"></a>
 ## 🗺️ Roadmap
 - Resposta ativa no WhatsApp  
 - Filtro anti-duplicados por telefone  
