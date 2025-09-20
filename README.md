@@ -36,17 +36,23 @@
 - [🔗 Links úteis](#links-uteis)
 - [🎥 Demo](#demo)
 - [⚡ Guia rápido](#guia-rapido)
+- [🔄 Fluxo visual resumido](#fluxo-visual)
+- [🧱 Estrutura do projeto](#estrutura)
+- [✅ Pré-requisitos](#pre-requisitos)
+- [🔐 Configuração do .env](#config-env)
+- [🧪 Testes em camadas](#testes)
 - [🌐 Webhook Flask (WhatsApp Cloud API)](#webhook-flask)
 - [🧠 Anti-duplicados](#anti-duplicados)
 - [✉️ E-mail com botão “Responder no WhatsApp”](#email-whatsapp)
-- [🧯 Problemas comuns](#problemas-comuns)
-- [🧩 Comandos úteis](#comandos-uteis)
+- [🧯 Problemas comuns](#problemas)
+- [🧩 Comandos úteis](#comandos)
 - [🗺️ Roadmap](#roadmap)
 - [📜 Licença](#licenca)
 - [👩‍💻 Autora & Contato](#autora-contato)
 
 ---
 
+<a id="links-uteis"></a>
 ## 🔗 Links úteis
 
 - **📊 Planilha demo (view-only):** [Google Sheets](https://docs.google.com/spreadsheets/d/1SQ56Wes-9d54ahjK04furxZm4PViW2-Q3RLm-sJuqAE/edit?usp=sharing)
@@ -75,6 +81,7 @@ Extras visuais: duplicado de **WAMID** destacado em laranja e validação de dat
 
 ---
 
+<a id="guia-rapido"></a>
 ## ⚡ Guia rápido
 ### Ativar ambiente
 - **Windows (CMD):** `.venv\Scripts\activate`
@@ -99,11 +106,13 @@ Extras visuais: duplicado de **WAMID** destacado em laranja e validação de dat
 
 ---
 
+<a id="fluxo-visual"></a>
 ## 🔄 Fluxo visual resumido
-📱 WhatsApp (mensagem do cliente) → 🌐 Webhook Flask (recebe evento do Meta) → 📊 Google Sheets (salva lead e atualiza status) → ✉️ E-mail (envio automático para equipe) → 📝 Logs + Anti-duplicados (monitoramento e prevenção)
+📱 WhatsApp → 🌐 Webhook Flask → 📊 Google Sheets → ✉️ E-mail → 📝 Logs + Anti-duplicados
 
 ---
 
+<a id="estrutura"></a>
 ## 🧱 Estrutura do projeto (esperada)
 whatsapp-sheets-email-bot/  
 ├─ .env  
@@ -125,6 +134,7 @@ whatsapp-sheets-email-bot/
 
 ---
 
+<a id="pre-requisitos"></a>
 ## ✅ Pré-requisitos
 - Python 3.10+
 - Conta Google + **Google Cloud** com:
@@ -135,6 +145,7 @@ whatsapp-sheets-email-bot/
 
 ---
 
+<a id="config-env"></a>
 ## 🔐 Configuração do `.env`
 
 Arquivo: [./.env.example](./.env.example)
@@ -178,6 +189,7 @@ TEST_BODY=Ola, quero orcamento
 
 ---
 
+<a id="testes"></a>
 ## 🧪 Testes em camadas
 1) Sheets — criar aba e cabeçalhos: `python scripts/setup_sheet.py` → Esperado: `✅ Planilha OK!`  
 2) Sheets — inserir lead manual: `python scripts/append_lead.py` → Esperado: `✅ Lead adicionado`  
@@ -185,6 +197,7 @@ TEST_BODY=Ola, quero orcamento
 
 ---
 
+<a id="webhook-flask"></a>
 ## 🌐 Webhook Flask (WhatsApp Cloud API)
 1) Subir o servidor local: `python scripts/webhook.py`  
 2) Abrir túnel HTTPS (ngrok): `ngrok http 5000`  
@@ -199,6 +212,7 @@ TEST_BODY=Ola, quero orcamento
 
 ---
 
+<a id="anti-duplicados"></a>
 ## 🧠 Anti-duplicados
 - Implementado em `scripts/dedupe.py` via SQLite (`data/state.db`)  
 - Usa `wamid` do WhatsApp como chave  
@@ -207,12 +221,14 @@ TEST_BODY=Ola, quero orcamento
 
 ---
 
+<a id="email-whatsapp"></a>
 ## ✉️ E-mail com botão “Responder no WhatsApp”
 - Inclui botão `https://wa.me/55XXXXXXXXXXX`  
 - Suporte a logo (`EMAIL_LOGO_URL`)  
 
 ---
 
+<a id="problemas"></a>
 ## 🧯 Problemas comuns
 - **403 (Sheets API desabilitada)** → habilite Sheets + Drive no Google Cloud  
 - **SpreadsheetNotFound** → compartilhe planilha com a service account  
@@ -221,6 +237,7 @@ TEST_BODY=Ola, quero orcamento
 
 ---
 
+<a id="comandos"></a>
 ## 🧩 Comandos úteis
 Ativar ambiente: `.venv\Scripts\activate` (Windows CMD) / `& ".\.venv\Scripts\Activate.ps1"` (PowerShell) / `source .venv/bin/activate` (Linux/Mac)  
 Scripts: `python scripts/setup_sheet.py`, `python scripts/append_lead.py`, `python scripts/append_and_notify.py`, `python scripts/webhook.py`  
@@ -239,6 +256,7 @@ Ver logs: `type .\logs\app.log` (Windows) / `cat ./logs/app.log` (Linux/Mac)
 
 ---
 
+<a id="licenca"></a>
 ## 📜 Licença
 Este projeto está sob a licença [MIT](./LICENSE).
 
