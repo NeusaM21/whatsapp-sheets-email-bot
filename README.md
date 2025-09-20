@@ -41,7 +41,7 @@
 - [✉️ E-mail com botão “Responder no WhatsApp”](#️-e-mail-com-botão-responder-no-whatsapp)
 - [🧯 Problemas comuns](#-problemas-comuns)
 - [🧩 Comandos úteis](#-comandos-úteis)
-- [🗺️ Roadmap](#️-roadmap)
+- [🗺️ Roadmap](#-roadmap)
 - [📜 Licença](#-licença)
 - [👩‍💻 Autora & Contato](#-autora--contato)
 
@@ -247,9 +247,8 @@ Este projeto está sob a licença [MIT](./LICENSE).
 
 ---
 
-<!-- Botão voltar -->
 <p align="left">
-  <a href="../">
+  <a href="https://github.com/NeusaM21">
     <img src="https://img.shields.io/badge/⬅️-Voltar%20para%20o%20portfólio%20principal-blue?style=for-the-badge"/>
   </a>
 </p>
