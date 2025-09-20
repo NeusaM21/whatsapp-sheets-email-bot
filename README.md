@@ -58,15 +58,17 @@ Nenhuma informação real de clientes ou contatos foi utilizada.
 
 ---
 
-## 🎥 ## Demo
+<a id="demo"></a>
+## 🎥 Demo
 <details open>
 <summary>Clique para ver a demo</summary>
 
 <p align="center">
   <img src="assets/demo-whatsapp-sheets-bot.gif"
-     alt="Linha entrando na planilha (WhatsApp → Sheets → Email)"
-     width="960">
+       alt="Linha entrando na planilha (WhatsApp → Sheets → Email)"
+       width="960">
 </p>
+</details>
 
 **O que o GIF mostra:** envio de um lead de teste via `/webhook`, inserção automática na aba `leads`, `updated_at` preenchido e `diff_minutos = 0`.  
 Extras visuais: duplicado de **WAMID** destacado em laranja e validação de data em **updated_at**.
@@ -241,6 +243,7 @@ Este projeto está sob a licença [MIT](./LICENSE).
 
 ---
 
+<a id="autora-contato"></a>
 ## 👩‍💻 Autora & Contato
 **Autora:** [NeusaM21](https://github.com/NeusaM21)  
 **Contato:** [contact.neusam21@gmail.com](mailto:contact.neusam21@gmail.com)
