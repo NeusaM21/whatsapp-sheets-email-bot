@@ -1,31 +1,36 @@
+<!-- Language Switch -->
 <p align="center">
   <a href="./README.en.md">
-    <img src="https://img.shields.io/badge/🇺🇸%20READ%20IN-English-blue?style=for-the-badge"/>
+    <img src="https://img.shields.io/badge/🇺🇸-English-blue?style=flat-square"/>
   </a>
   <a href="./README.md">
-    <img src="https://img.shields.io/badge/🇧🇷%20LEIA%20EM-Português-green?style=for-the-badge"/>
+    <img src="https://img.shields.io/badge/🇧🇷-Português-green?style=flat-square"/>
   </a>
 </p>
 
-<p align="center"> 
-  <img src="assets/banner-readme.png" alt="whatsapp-sheets-email-bot banner" width="100%" />
-</p>
-
+<!-- Project Banner -->
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python"/>
-  <img src="https://img.shields.io/badge/Flask-2.x-black?style=for-the-badge&logo=flask"/>
-  <img src="https://img.shields.io/badge/Google%20Sheets-API-green?style=for-the-badge&logo=googlesheets"/>
-  <img src="https://img.shields.io/badge/Gmail-SMTP-red?style=for-the-badge&logo=gmail"/>
-  <img src="https://img.shields.io/badge/SQLite-Anti--Duplicates-lightgrey?style=for-the-badge&logo=sqlite"/>
-  <img src="https://img.shields.io/badge/Logs-Enabled-orange?style=for-the-badge&logo=logstash"/>
-  <img src="https://img.shields.io/badge/Deployment-Ready%20(roadmap)-purple?style=for-the-badge&logo=railway"/>
-  <img src="https://img.shields.io/badge/Status-Local%20Only-yellow?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"/>
+  <img src="assets/banner-readme.png" alt="whatsapp-sheets-email-bot banner" width="100%"/>
 </p>
 
----
+<!-- Divider ABOVE badges -->
+<hr/>
+
+<!-- Tech Badges (BELOW divider) -->
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python" alt="Python"/>
+  <img src="https://img.shields.io/badge/Flask-2.x-black?style=flat-square&logo=flask" alt="Flask"/>
+  <img src="https://img.shields.io/badge/Google%20Sheets-API-green?style=flat-square&logo=googlesheets" alt="Google Sheets"/>
+  <img src="https://img.shields.io/badge/Gmail-SMTP-red?style=flat-square&logo=gmail" alt="Gmail"/>
+  <img src="https://img.shields.io/badge/SQLite-Anti--Duplicates-lightgrey?style=flat-square&logo=sqlite" alt="SQLite"/>
+  <img src="https://img.shields.io/badge/Logs-Enabled-orange?style=flat-square&logo=logstash" alt="Logs"/>
+  <img src="https://img.shields.io/badge/Deployment-Ready%20(roadmap)-purple?style=flat-square&logo=railway" alt="Deployment"/>
+  <img src="https://img.shields.io/badge/Status-Local%20Only-yellow?style=flat-square" alt="Status"/>
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT"/>
+</p>
 
 ## 🔗 Useful Links
+
 - **📊 Demo Sheet (view-only):** [Google Sheets](https://docs.google.com/spreadsheets/d/1SQ56Wes-9d54ahjK04furxZm4PViW2-Q3RLm-sJuqAE/edit?usp=sharing)  
 - **📘 Deploy Docs:** [./docs/DEPLOY.md](./docs/DEPLOY.md)  
 - **⚙️ Example config:** [./.env.example](./.env.example)
