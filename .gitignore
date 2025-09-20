@@ -7,11 +7,13 @@ __pycache__/
 *.pyc
 *.pyd
 *.pyo
+.python-version     # pyenv
+.ipynb_checkpoints/ # Jupyter checkpoints
+
+# Arquivos de sistema
 .DS_Store
 Thumbs.db
 desktop.ini
-.ipynb_checkpoints/
-.python-version   # pyenv
 
 # =========================
 # IDE
@@ -27,9 +29,9 @@ desktop.ini
 # (ordem IMPORTA: exceção vem depois)
 # =========================
 /.env
-/.env.*
-!/.env.example      
-.envrc              
+/.env.* 
+!/.env.example      # manter apenas o exemplo
+.envrc
 
 # pastas de segredos
 secrets/
@@ -44,7 +46,7 @@ creds/
 *.cer
 *.der
 
-# caso alguém deixe o JSON solto na raiz
+# caso alguém deixe JSON de credenciais solto
 *service*account*.json
 google-credentials*.json
 
@@ -59,8 +61,9 @@ google-credentials*.json
 ngrok.exe
 ~$*                 # lockfiles do Office/OneDrive
 
-# (opcional) evitar subir dumps acidentais de leads
-# *.csv
+# evitar subir dumps acidentais de leads
+*.csv
+!data/example.csv   # exceção: permitir CSV fictício de demo
 
 # =========================
 # Cache / Build
