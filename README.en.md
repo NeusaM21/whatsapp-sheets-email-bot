@@ -29,6 +29,30 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT"/>
 </p>
 
+---
+
+## 📑 Table of Contents
+
+- [🔗 Useful Links](#useful-links)
+- [🎥 Demo](#demo)
+- [⚡ Quickstart](#quickstart)
+- [🔄 Visual Flow](#visual-flow)
+- [🧱 Project Structure](#project-structure)
+- [✅ Requirements](#requirements)
+- [🔐 .env Configuration](#env-configuration)
+- [🧪 Layered Tests](#layered-tests)
+- [🌐 Flask Webhook (WhatsApp Cloud API)](#flask-webhook)
+- [🧠 Anti-duplicates](#anti-duplicates)
+- [✉️ Email with “Reply on WhatsApp” button](#email-whatsapp)
+- [🧯 Common Issues](#common-issues)
+- [🧩 Useful Commands](#useful-commands)
+- [🗺️ Roadmap](#roadmap)
+- [📜 License](#license)
+- [👩‍💻 Author & Contact](#author-contact)
+
+---
+
+<a id="useful-links"></a>
 ## 🔗 Useful Links
 
 - **📊 Demo Sheet (view-only):** [Google Sheets](https://docs.google.com/spreadsheets/d/1SQ56Wes-9d54ahjK04furxZm4PViW2-Q3RLm-sJuqAE/edit?usp=sharing)  
@@ -39,21 +63,24 @@
 
 ---
 
-## 🎥 ## Demo
+<a id="demo"></a>
+## 🎥 Demo
 <details open>
 <summary>Click to watch the demo</summary>
 
 <p align="center">
   <img src="assets/demo-whatsapp-sheets-bot.gif"
-     alt="New row entering the Google Sheet (WhatsApp → Sheets → Email)"
-     width="960">
+       alt="New row entering the Google Sheet (WhatsApp → Sheets → Email)"
+       width="960">
 </p>
+</details>
 
 **What the GIF shows:** a test lead is sent via `/webhook`, automatically inserted into the `leads` sheet, `updated_at` is populated, and `diff_minutos = 0`.  
 **Extra visuals:** duplicate **WAMID** highlighted in orange and date validation on **updated_at**.
 
 ---
 
+<a id="quickstart"></a>
 ## ⚡ Quickstart
 ### Activate environment
 - **Windows (CMD):** `.venv\Scripts\activate`  
@@ -78,11 +105,13 @@
 
 ---
 
+<a id="visual-flow"></a>
 ## 🔄 Visual Flow
 📱 WhatsApp (client message) → 🌐 Flask Webhook (Meta event) → 📊 Google Sheets (save lead & update status) → ✉️ Email (auto-send to team) → 📝 Logs + Anti-duplicates (monitoring & prevention)  
 
 ---
 
+<a id="project-structure"></a>
 ## 🧱 Project Structure (expected)
 whatsapp-sheets-email-bot/  
 ├─ .env  
@@ -104,6 +133,7 @@ whatsapp-sheets-email-bot/
 
 ---
 
+<a id="requirements"></a>
 ## ✅ Requirements
 - Python 3.10+  
 - Google Account + **Google Cloud** with:  
@@ -114,6 +144,7 @@ whatsapp-sheets-email-bot/
 
 ---
 
+<a id="env-configuration"></a>
 ## 🔐 `.env` Configuration
 File: [./.env.example](./.env.example)
 
@@ -155,6 +186,7 @@ TEST_BODY=Hello, I want a quote
 
 ---
 
+<a id="layered-tests"></a>
 ## 🧪 Layered Tests
 
 - **Sheets — create tab & headers:** `python scripts/setup_sheet.py` → Expected: ✅ Sheet OK!  
@@ -163,6 +195,7 @@ TEST_BODY=Hello, I want a quote
 
 ---
 
+<a id="flask-webhook"></a>
 ## 🌐 Flask Webhook (WhatsApp Cloud API)
 
 - **Start local server:** `python scripts/webhook.py`  
@@ -179,6 +212,7 @@ TEST_BODY=Hello, I want a quote
 
 ---
 
+<a id="anti-duplicates"></a>
 ## 🧠 Anti-duplicates
 
 - Implemented in `scripts/dedupe.py` via SQLite (`data/state.db`)  
@@ -188,6 +222,7 @@ TEST_BODY=Hello, I want a quote
 
 ---
 
+<a id="email-whatsapp"></a>
 ## ✉️ Email with “Reply on WhatsApp” button
 
 - Includes button: `https://wa.me/55XXXXXXXXXXX`  
@@ -195,6 +230,7 @@ TEST_BODY=Hello, I want a quote
 
 ---
 
+<a id="common-issues"></a>
 ## 🧯 Common Issues
 
 - **403 (Sheets API disabled)** → enable Sheets + Drive in Google Cloud  
@@ -204,6 +240,7 @@ TEST_BODY=Hello, I want a quote
 
 ---
 
+<a id="useful-commands"></a>
 ## 🧩 Useful Commands
 
 - **Activate env:**  
@@ -217,6 +254,7 @@ TEST_BODY=Hello, I want a quote
 
 ---
 
+<a id="roadmap"></a>
 ## 🗺️ Roadmap
 
 - Active replies on WhatsApp  
@@ -228,13 +266,24 @@ TEST_BODY=Hello, I want a quote
 
 ---
 
+<a id="license"></a>
 ## 📜 License
 
 This project is under the [MIT License](./LICENSE).  
 
 ---
 
+<a id="author-contact"></a>
 ## 👩‍💻 Author & Contact
 
 **Author:** [NeusaM21](https://github.com/NeusaM21)  
 **Contact:** [contact.neusam21@gmail.com](mailto:contact.neusam21@gmail.com)
+
+---
+
+<p align="left">
+  <a href="https://github.com/NeusaM21">
+    <img src="https://img.shields.io/badge/⬅️-Voltar%20para%20o%20portfólio%20principal-blue?style=for-the-badge"/>
+  </a>
+</p>
+
