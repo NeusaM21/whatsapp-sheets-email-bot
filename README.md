@@ -145,45 +145,71 @@ whatsapp-sheets-email-bot/
 
 ---
 
+---
+
 <a id="config-env"></a>
 ## 🔐 Configuração do `.env`
 
 Arquivo: [./.env.example](./.env.example)
 
 ```ini
-# App / Server
-ENV=dev
+# ==========================
+# 🔧 App / Server
+# ==========================
+ENV=dev                 # dev | prod
 HOST=127.0.0.1
 PORT=5000
 TZ=America/Sao_Paulo
-LOG_LEVEL=INFO
+LOG_LEVEL=INFO          # DEBUG | INFO | WARNING | ERROR
 
-# Google Sheets
-SHEET_ID=1SQ56Wes9d54ahjK04furxZm4PViW2-Q3RLm-sJuqAE
+# ==========================
+# 📄 Google Sheets
+# ==========================
+# ID da planilha (trecho entre /d/ e /edit na URL do Google Sheets)
+SHEET_ID=SUA_SHEET_ID_AQUI
 SHEET_TAB=leads
-GOOGLE_SERVICE_ACCOUNT_JSON=./creds/service-account.json
-SHARE_WITH_EMAIL=whatsapp.bot.teste@gmail.com
 
-# E-mail (SMTP / Gmail)
-EMAIL_ENABLED=0
+# Caminho para o JSON da Service Account (arquivo não deve ser commitado)
+GOOGLE_SERVICE_ACCOUNT_JSON=./creds/service-account.json
+# E-mail da service account com permissão de Editor na planilha
+SHARE_WITH_EMAIL=seu_email_service_account@projeto.iam.gserviceaccount.com
+
+# ==========================
+# ✉️ SMTP / E-mail
+# ==========================
+EMAIL_ENABLED=0         # 0 = desativado | 1 = ativado
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_STARTTLS=1
 SMTP_USER=seu_email@gmail.com
-SMTP_PASS=SUA_SENHA_DE_APP
+SMTP_PASS=sua_senha_de_app
 EMAIL_FROM=seu_email@gmail.com
 EMAIL_TO=destinatario@exemplo.com
 EMAIL_SUBJECT=Novo lead do WhatsApp
 
-# Meta Webhook
-VERIFY_TOKEN=minha-verificacao-super-secreta
-WHATSAPP_TOKEN=EAAGxxxxxxxxxxxxxxxxxxxxxxxx
+# Alternativa Mailtrap (para testes seguros)
+# EMAIL_ENABLED=1
+# SMTP_HOST=smtp.mailtrap.io
+# SMTP_PORT=587
+# SMTP_STARTTLS=1
+# SMTP_USER=SEU_USER_MAILTRAP
+# SMTP_PASS=SEU_PASS_MAILTRAP
+# EMAIL_FROM=bot@meubot.dev
+# EMAIL_TO=you@example.com
 
-# Testes locais
+# ==========================
+# 🔗 Meta Webhook
+# ==========================
+VERIFY_TOKEN=sua_chave_de_verificacao
+WHATSAPP_TOKEN=seu_token_da_meta
+
+# ==========================
+# 🧪 Testes locais
+# ==========================
 TEST_BASE_URL=http://127.0.0.1:5000
 TEST_FROM=5511999999999
-TEST_NAME=Maria Teste
-TEST_BODY=Ola, quero orcamento
+TEST_NAME=Usuario Teste
+TEST_BODY="Ola, quero um orcamento"
 ```
 
 
